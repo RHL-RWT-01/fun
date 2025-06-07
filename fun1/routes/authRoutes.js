@@ -19,3 +19,4 @@ authRouter.post("/register", (req, res) => {
         res.status(400).json({ message: "Username and password are required" });
     }
 });
+export { authRouter };
