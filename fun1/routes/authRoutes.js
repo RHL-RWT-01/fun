@@ -19,4 +19,13 @@ authRouter.post("/register", (req, res) => {
         res.status(400).json({ message: "Username and password are required" });
     }
 });
+
+authRouter.get("/profile", (req, res) => {
+    const userProfile = {
+        username: "admin",
+        email: "rahul@gmail.com"
+    };
+    res.status(200).json(userProfile);
+});
+
 export { authRouter };
