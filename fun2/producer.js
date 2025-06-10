@@ -1,35 +1,20 @@
 import kafka from "./client.js";
-import readline from "readline";
-
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-});
 
 async function produce() {
     const producer = kafka.producer();
     console.log("Connecting to Kafka producer...");
     await producer.connect();
     console.log("Connected to Kafka producer");
-    console.log("Type anything to send a message to topic 'test-topic'. Type 'exit' to quit.");
 
-    rl.setPrompt(">");
-    rl.prompt();
+    let counter = 1;
 
-    rl.on("line", async (line) => {
-        if (line.trim().toLowerCase() === "exit") {
-            rl.close();
-            await producer.disconnect();
-            console.log("Disconnected from Kafka producer");
-            process.exit(0);
-        }
-
+    const interval = setInterval(async () => {
         const message = {
-            name: "test",
-            age: 20,
+            name: `User${counter}`,
+            age: 20 + (counter % 10),
             city: "Indore",
             country: "India",
-            input: line,
+            messageNumber: counter,
             timestamp: new Date().toISOString(),
         };
 
@@ -38,21 +23,31 @@ async function produce() {
                 topic: "test-topic",
                 messages: [
                     {
-                        key: "topic-1",
+                        key: `key-${counter}`,
                         value: JSON.stringify(message),
                     },
                 ],
             });
-            console.log("Message sent:", message);
-        } catch (error) {
-            console.error("Error sending message:", error);
+            console.log(`Sent message ${counter}:`, message);
+        } catch (err) {
+            console.error("Error sending message:", err);
+            clearInterval(interval);
+            await producer.disconnect();
+            process.exit(1);
         }
 
-        rl.prompt();
-    });
+        counter++;
+
+        // Stop after sending 10 messages
+        if (counter > 10) {
+            clearInterval(interval);
+            await producer.disconnect();
+            console.log("Disconnected from Kafka producer after sending 10 messages.");
+        }
+    }, 2000); // every 2 seconds
 }
 
-produce().catch((error) => {
-    console.error("Error during producer operation:", error);
+produce().catch((err) => {
+    console.error("Error during producer operation:", err);
     process.exit(1);
 });
