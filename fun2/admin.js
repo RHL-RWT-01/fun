@@ -1,12 +1,12 @@
 import kafka from "./client.js";
 
-async function init(params) {
+async function init() {
     const admin = kafka.admin();
     console.log("Connecting to Kafka admin...");
     await admin.connect();
     console.log("Connected to Kafka admin");
 
-    console.log("Creating topic...");
+    console.log("Creating topics...");
     await admin.createTopics({
         topics: [
             {
@@ -14,16 +14,25 @@ async function init(params) {
                 numPartitions: 2,
                 replicationFactor: 1,
             },
+            {
+                topic: "audit-topic",
+                numPartitions: 1,
+                replicationFactor: 1,
+            },
         ],
-    }).then(() => {
-        console.log("Topic created successfully");
+    }).then((created) => {
+        if (created) {
+            console.log("Topics created successfully");
+        } else {
+            console.log("Topics already existed or no new topics created");
+        }
     }).catch((error) => {
-        console.error("Error creating topic:", error);
-    })
+        console.error("Error creating topics:", error);
+    });
 
     console.log("Disconnecting from Kafka admin...");
     await admin.disconnect();
-
+    console.log("Disconnected from Kafka admin");
 }
 
 init().then(() => {
@@ -31,4 +40,3 @@ init().then(() => {
 }).catch((error) => {
     console.error("Error during admin initialization:", error);
 });
-
