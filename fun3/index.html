@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun3</title>
+    <link rel="stylesheet" href="style.css">    
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <h1>Fun3</h1>
+    <p>This is the Fun3 page.</p>
+    <button id="fun3Button">Click me!</button>
+    <div id="fun3Content"></div>
+    <script>
+        document.getElementById('fun3Button').addEventListener('click', function() {
+            document.getElementById('fun3Content').innerHTML = '<p>You clicked the button!</p>';
+        });
+    </script>
+    <footer>
+        <p>&copy; 2023 Fun3</p>
+    </footer>
+</body>
+</html>
