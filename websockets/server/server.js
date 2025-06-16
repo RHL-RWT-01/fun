@@ -53,31 +53,6 @@ kafkaConsumer().catch(console.error);
 
 
 // kafka producer setup
-const producer = kafka.producer();
-
-async function kafkaProducer() {
-  await producer.connect();
-  console.log("Kafka producer connected");
-
-  // Example of sending a transaction
-  setInterval(async () => {
-    const transaction = {
-      id: uuidv4(),
-      user: `user_${Math.floor(Math.random() * 1000)}`,
-      amount: (Math.random() * 1000).toFixed(2),
-      timestamp: new Date().toISOString(),
-    };
-    const message = {
-      value: JSON.stringify(transaction),
-    };
-    await producer.send({
-      topic: 'transactions',
-      messages: [message],
-    });
-    console.log(`Sent transaction: ${JSON.stringify(transaction)}`);
-  },5000);
-}
-
 
 
 
