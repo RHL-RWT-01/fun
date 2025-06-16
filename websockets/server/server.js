@@ -27,9 +27,28 @@ const kafka = new Kafka({
 
 const consumer = kafka.consumer({ groupId: 'transaction-group' });
 
-async function kafkaConsumer() {
-  await consumer.connect();
+async function waitForKafka() {
+  const MAX_RETRIES = 10;
+  const DELAY_MS = 5000;
+
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      await consumer.connect();
+      console.log("✅ Connected to Kafka");
+      break;
+    } catch (err) {
+      console.error(`Kafka connection attempt ${attempt} failed, retrying in ${DELAY_MS / 1000}s...`);
+      await new Promise((res) => setTimeout(res, DELAY_MS));
+    }
+
+    if (attempt === MAX_RETRIES) {
+      console.error("❌ Failed to connect to Kafka after multiple attempts");
+      process.exit(1);
+    }
+  }
+
   await consumer.subscribe({ topic: 'transactions', fromBeginning: true });
+
   await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
       const transaction = JSON.parse(message.value.toString());
@@ -46,8 +65,7 @@ async function kafkaConsumer() {
   });
 }
 
-
-kafkaConsumer().catch(console.error);
+waitForKafka().catch(console.error);
 
 
 

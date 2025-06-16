@@ -17,6 +17,7 @@ export default function HomePage() {
 
     socket.onmessage = (event) => {
       const msg = JSON.parse(event.data);
+      console.log('Received message:', msg);
       if (msg.type === 'transaction') {
         setTransactions((prev) => [msg.data, ...prev.slice(0, 49)]);
       }
