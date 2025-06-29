@@ -22,10 +22,10 @@ app.get('/users', (req, res) => {
     res.send(users);
 })
 
-app.delete('/users/:id',(req,res)=>{
-    const {id}=req.params;
-    users.filter((user)=> id!==user.id)
-    res.send(`user with id ${id} deleted`);
+app.delete('/users/:id', (req, res) => {
+    const { id } = req.params;
+    users.filter((user) => id !== user.id)
+    res.send(`user with id ${id} deleted`)
 })
 
 app.listen(port, () => {
