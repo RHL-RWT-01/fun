@@ -18,6 +18,10 @@ app.post('/users', async (req, res) => {
     res.status(200).json({msg:"User added success"});
 })
 
+app.get('/users',(req,res)=>{
+    res.send(users);
+})
+
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
 })
